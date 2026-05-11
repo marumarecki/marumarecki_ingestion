@@ -18,6 +18,7 @@ from storage.r2_uploader import upload_payload_to_r2, upload_file_to_r2
 log_dir = Path(__file__).parent / "logs"
 log_dir.mkdir(exist_ok=True)
 log_file = log_dir / f"pipeline_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+artifact_dir_root = Path(__file__).parent / "artifact"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -42,16 +43,22 @@ def process_single_task(api_url, verify_ssl, output_local, r2_bucket, r2_key, r2
         if count is not None:
             logger.info(f"Item count: {count}")
 
-        # Save locally if specified
+        # If no explicit local output path was provided, create an artifact path
+        if not output_local and r2_bucket and r2_key:
+            output_local = artifact_dir_root / r2_key
+            output_local.parent.mkdir(parents=True, exist_ok=True)
+
         if output_local:
-            saved_path = save_payload(payload, output_local)
+            output_path = Path(output_local)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            saved_path = save_payload(payload, str(output_path))
             logger.info(f"Saved locally to: {saved_path}")
 
             # If R2 upload is also requested, upload the file
             if r2_bucket and r2_key:
                 logger.info(f"Uploading file to R2: {r2_bucket}/{r2_key}")
                 upload_file_to_r2(
-                    output_local,
+                    str(output_path),
                     r2_bucket,
                     r2_key,
                     account_id=r2_account_id,
@@ -60,7 +67,7 @@ def process_single_task(api_url, verify_ssl, output_local, r2_bucket, r2_key, r2
                 )
                 logger.info("Uploaded to R2 successfully.")
         elif r2_bucket and r2_key:
-            # Upload payload directly to R2
+            # Upload payload directly to R2 without local artifact
             logger.info(f"Uploading payload to R2: {r2_bucket}/{r2_key}")
             upload_payload_to_r2(
                 payload,

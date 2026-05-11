@@ -199,6 +199,8 @@ This repository includes a GitHub Actions workflow that runs the pipeline on sch
 3. **Review the workflow** in `.github/workflows/scheduled-pipeline.yml`:
    - Default: Runs daily at 2:00 AM UTC
    - Manual trigger: Available via GitHub Actions UI
+   - Uses `actions/upload-artifact@v4` for artifact uploads, compatible with the latest GitHub Actions artifacts API
+   - Uploads pipeline outputs from `sejm_api_pipeline/artifact/` using the same path structure as the configured R2 key
 
 ### Customizing the Schedule
 

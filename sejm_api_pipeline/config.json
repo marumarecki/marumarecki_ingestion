@@ -1,0 +1,28 @@
+{
+  "r2_defaults": {
+    "bucket": "R2_BUCKET_NAME",
+    "account_id": "R2_ACCOUNT_ID",
+    "access_key": "R2_ACCESS_KEY",
+    "secret_key": "R2_SECRET_KEY"
+  },
+  "tasks": [
+    {
+      "api_url": "https://api.sejm.gov.pl/sejm/term10/MP",
+      "r2_key": "data/sejm/term10/mps.json",
+      "verify_ssl": false,
+      "output_local": "sejm_term10_mps.json"
+    },
+    {
+      "api_url": "https://api.sejm.gov.pl/sejm/term9/MP",
+      "r2_key": "data/sejm/term9/mps.json",
+      "verify_ssl": false,
+      "output_local": "sejm_term9_mps.json"
+    },
+    {
+      "api_url": "https://api.sejm.gov.pl/sejm/term8/MP",
+      "r2_key": "data/sejm/term8/mps.json",
+      "verify_ssl": false,
+      "output_local": "sejm_term8_mps.json"
+    }
+  ]
+}
