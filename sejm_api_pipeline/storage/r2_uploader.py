@@ -2,7 +2,9 @@ import json
 import os
 import boto3
 from botocore.client import Config
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def upload_payload_to_r2(payload, bucket, key, account_id=None, access_key=None, secret_key=None):
     """Upload JSON payload directly to Cloudflare R2 bucket."""
