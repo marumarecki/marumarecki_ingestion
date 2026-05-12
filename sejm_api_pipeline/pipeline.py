@@ -4,9 +4,17 @@
 import argparse
 import json
 import sys
+import os
 from pathlib import Path
 from datetime import datetime
 import logging
+
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv not installed, rely on system env vars
 
 # Add the project root to Python path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -29,6 +37,18 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+
+def expand_env_vars(obj):
+    """Recursively expand environment variables in strings within a data structure."""
+    if isinstance(obj, str):
+        return os.path.expandvars(obj)
+    elif isinstance(obj, dict):
+        return {key: expand_env_vars(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [expand_env_vars(item) for item in obj]
+    else:
+        return obj
 
 
 def process_single_task(api_url, verify_ssl, output_local, r2_bucket, r2_key, r2_account_id, r2_access_key, r2_secret_key):
@@ -93,6 +113,9 @@ def process_batch_config(config_file):
     
     with open(config_file, 'r') as f:
         config = json.load(f)
+    
+    # Expand environment variables in the configuration
+    config = expand_env_vars(config)
     
     tasks = config.get('tasks', [])
     r2_defaults = config.get('r2_defaults', {})
