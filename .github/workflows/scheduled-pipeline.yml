@@ -9,6 +9,7 @@ on:
 
 jobs:
   ingest-sejm-data:
+    environment: ingestion
     runs-on: ubuntu-latest
     
     steps:
