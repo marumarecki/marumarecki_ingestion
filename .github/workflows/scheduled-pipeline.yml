@@ -9,6 +9,7 @@ on:
 
 jobs:
   ingest-sejm-data:
+    name: Ingest Sejm API Data
     environment: ingestion
     runs-on: ubuntu-latest
     
